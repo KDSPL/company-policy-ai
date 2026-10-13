@@ -8,13 +8,13 @@
 */
 -- AlterEnum
 BEGIN;
-CREATE TYPE "DocumentStatus_new" AS ENUM ('PROCESSING', 'READY', 'FAILED');
+CREATE TYPE "DocumentStatus_new" AS ENUM ('ACTIVE', 'READY', 'FAILED');
 ALTER TABLE "public"."Document" ALTER COLUMN "status" DROP DEFAULT;
 ALTER TABLE "Document" ALTER COLUMN "status" TYPE "DocumentStatus_new" USING ("status"::text::"DocumentStatus_new");
 ALTER TYPE "DocumentStatus" RENAME TO "DocumentStatus_old";
 ALTER TYPE "DocumentStatus_new" RENAME TO "DocumentStatus";
 DROP TYPE "public"."DocumentStatus_old";
-ALTER TABLE "Document" ALTER COLUMN "status" SET DEFAULT 'PROCESSING';
+ALTER TABLE "Document" ALTER COLUMN "status" SET DEFAULT 'ACTIVE';
 COMMIT;
 
 -- DropForeignKey

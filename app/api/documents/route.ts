@@ -190,7 +190,7 @@ export async function POST(req: Request) {
 
         fileHash,
 
-        status: "PROCESSING",
+        status: "ACTIVE",
       },
     });
 

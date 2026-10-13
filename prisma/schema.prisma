@@ -28,7 +28,7 @@ model Document {
   fileType   String
   fileSize   Int
   uploadedBy String
-  status     DocumentStatus  @default(PROCESSING)
+  status     DocumentStatus  @default(ACTIVE)
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
   fileHash   String          @unique
@@ -85,7 +85,7 @@ enum Role {
 }
 
 enum DocumentStatus {
-  PROCESSING
+  ACTIVE
   READY
   FAILED
 }

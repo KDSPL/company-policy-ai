@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "vector";
 CREATE TYPE "Role" AS ENUM ('EMPLOYEE', 'HR_ADMIN');
 
 -- CreateEnum
-CREATE TYPE "DocumentStatus" AS ENUM ('PROCESSING', 'READY', 'FAILED');
+CREATE TYPE "DocumentStatus" AS ENUM ('ACTIVE', 'READY', 'FAILED');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -29,7 +29,7 @@ CREATE TABLE "Document" (
     "fileType" TEXT NOT NULL,
     "fileSize" INTEGER NOT NULL,
     "uploadedBy" TEXT NOT NULL,
-    "status" "DocumentStatus" NOT NULL DEFAULT 'PROCESSING',
+    "status" "DocumentStatus" NOT NULL DEFAULT 'ACTIVE',
     "errorMessage" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
