@@ -4,5 +4,11 @@ node_modules
 .gitignore
 README.md
 Dockerfile
+Dockerfile.prod
 docker-compose.yml
 npm-debug.log
+.idea
+*.pdf
+.env
+.env.*
+.env*.local
