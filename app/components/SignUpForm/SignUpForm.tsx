@@ -19,14 +19,16 @@ const SignUpForm: React.FC = () => {
     const formData = new FormData(event.currentTarget);
 
     try {
-      await createUser(formData);
-      setMessage('Account created successfully!');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Something went wrong.');
+      const result = await createUser(formData);
+    
+      if (!result.success) {
+        setError(result.message);
+        return;
       }
+    
+      setMessage(result.message);
+    } catch {
+      setError('Something went wrong. Please try again.');
     }
   }
 
@@ -77,7 +79,7 @@ const SignUpForm: React.FC = () => {
           type="submit"
           className={styles.submitBtn}
         >
-          Sign Up
+          Confirm
         </button>
       </form>
 

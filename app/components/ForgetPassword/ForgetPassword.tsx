@@ -23,6 +23,11 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({
 
     setError("");
 
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+
     const emailRegex =
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -140,16 +145,13 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({
         ) : (
           <>
             <h2 className={styles.title}>
-              RESET LINK SENT
+              CHECK YOUR EMAIL
             </h2>
 
             <p className={styles.description}>
-              A password reset link has been
-              successfully sent to
-              <strong> {email}</strong>.
-              <br />
-              Please check your inbox and follow
-              the instructions.
+              If an account exists with this email address,
+              you will receive a password reset link.
+              Please check your inbox.
             </p>
 
             <div className={styles.emailIcon}>

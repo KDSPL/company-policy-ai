@@ -122,7 +122,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         )}
 
         <small>
-          Supported formats: PDF, DOC, DOCX
+          Supported formats: PDF
         </small>
       </div>
     </section>
