@@ -66,12 +66,12 @@ const DocumentList: React.FC<DocumentListProps> = ({
         <div>
           <h2>Uploaded Documents</h2>
 
-          <span>
+          <p className={styles.totalDocs}>
             {documents.length}
             {documents.length === 1
-              ? "document"
-              : "documents"}
-          </span>
+              ? <span>document</span>
+              : <span>documents</span>}
+          </p>
         </div>
 
         {/* Search */}

@@ -6,26 +6,31 @@ import { sendPasswordResetEmail } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    const body = await req.json();
+    const email =
+      typeof body.email === "string"
+        ? body.email.trim().toLowerCase()
+        : "";
 
-    if (!email) {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
-        { message: "Email is required" },
+        { message: "Please enter a valid email address." },
         { status: 400 }
       );
     }
 
     const user = await prisma.user.findUnique({
-      where: {
-        email: email.toLowerCase(),
-      },
+      where: { email },
     });
 
     // Don't reveal whether the email exists
     if (!user) {
-      return NextResponse.json({
-        message: "If an account exists, a password reset link has been sent.",
-      });
+      return NextResponse.json(
+        {
+          message: "You are not registered. Please register first.",
+        },
+        { status: 404 }
+      );
     }
 
     // Generate secure random token

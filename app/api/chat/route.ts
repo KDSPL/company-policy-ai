@@ -6,6 +6,14 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
 export async function POST(req: Request) {
+  const session = await auth();
+
+  if (!session?.user) {
+    return NextResponse.json(
+      { error: "Unauthorized. Please sign in." },
+      { status: 401 }
+    );
+  }
   try {
     // 1. Get logged-in user
     const session = await auth();

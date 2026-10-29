@@ -252,9 +252,9 @@ const RecentChats: React.FC = () => {
             <div
               key={chat.id}
               className={styles.chatItem}
-              onClick={() =>
-                handleChatSelect(chat.id)
-              }
+              // onClick={() =>
+              //   handleChatSelect(chat.id)
+              // }
             >
               {deleteMode && (
                 <input
