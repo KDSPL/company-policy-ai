@@ -113,6 +113,11 @@ Required configuration includes:
 * `SMTP_FROM`
 * `ADMIN_EMAILS`
 
+To enable Google sign-in, set `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` in `.env`.
+In Google Cloud Console, add `http://localhost:3000/api/auth/callback/google` as an
+authorized redirect URI for local development. Use your deployed app's matching
+`/api/auth/callback/google` URL in production.
+
 ### Start the Application
 
 Install dependencies:

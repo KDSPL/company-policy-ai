@@ -5,6 +5,7 @@ import styles from './SignUpForm.module.scss';
 import logo from '@/public/companyLogo.png';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import { createUser } from '@/app/actions/userActions';
+import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton';
 
 const SignUpForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
@@ -79,6 +80,7 @@ const SignUpForm: React.FC = () => {
         >
           Sign Up
         </button>
+         <GoogleSignInButton />
       </form>
 
       <ThemeToggle />
