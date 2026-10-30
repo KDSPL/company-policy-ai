@@ -7,6 +7,7 @@ import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import styles from "./LoginForm.module.scss";
 import logo from "@/public/companyLogo.png";
 import ForgotPassword from "@/app/components/ForgetPassword/ForgetPassword";
+import GoogleSignInButton from "../GoogleSignInButton/GoogleSignInButton";
 
 const LogInForm: React.FC = () => {
   const router = useRouter();
@@ -134,6 +135,7 @@ const LogInForm: React.FC = () => {
             Sign Up
           </a>
         </p>
+        <GoogleSignInButton label="Sign in with Google" />
       </form>
       <ThemeToggle />
       {showForgotPassword && (
