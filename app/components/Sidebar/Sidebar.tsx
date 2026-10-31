@@ -3,7 +3,7 @@
 
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
-
+import kplogo from '@/public/kp-logo.png';
 import styles from "./Sidebar.module.scss";
 import NewChatIcon from "@/public/new-chat-icon.png";
 import DocumentIcon from "@/public/document-icon.png";
@@ -55,8 +55,18 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       ====================================== */}
 
       <div className={styles.sidebarTitle}>
-        AI BOT
+        <span className={styles.kpLogoWrapper}>
+          <img
+            src={kplogo.src}
+            alt="Kraftpixel Logo"
+            className={`companyLogo ${styles.logo}`}
+            width={37}
+            height={33}
+          />
+        </span>
 
+        <p>AI Bot</p>
+        
         <button
           className={styles.closeButton}
           onClick={onClose}
