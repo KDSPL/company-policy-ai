@@ -1,5 +1,5 @@
 services:
-  postgres:
+  postgres: #postgresql db
     image: pgvector/pgvector:pg16
     container_name: postgres
     environment:
@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 5
 
-  ollama:
+  ollama: #ollama server
     image: ollama/ollama:latest
     container_name: ollama
     ports:
@@ -24,7 +24,7 @@ services:
     volumes:
       - ollama_data:/root/.ollama
 
-  web:
+  web: #nextjs (development)
     build:
       context: .
       dockerfile: Dockerfile
@@ -45,8 +45,6 @@ services:
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - SMTP_FROM=${SMTP_FROM}
       - ADMIN_EMAILS=${ADMIN_EMAILS}
-      - AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
-      - AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET}
     volumes:
       - .:/app
       - /app/node_modules
@@ -56,6 +54,33 @@ services:
         condition: service_healthy
       ollama:
         condition: service_started
+
+  #uncomment the following code to test a build locally 
+  # web-prod: #nextjs (production build testing in local)
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.prod
+  #   container_name: company_policy_web_prod
+  #   ports:
+  #     - "3001:3000"
+  #   environment:
+  #     - DATABASE_URL=${DATABASE_URL}
+  #     - OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
+  #     - AUTH_SECRET=${AUTH_SECRET}
+  #     - CHAT_MODEL=${CHAT_MODEL}
+  #     - NODE_ENV=production
+  #     - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+  #     - SMTP_HOST=${SMTP_HOST}
+  #     - SMTP_PORT=${SMTP_PORT}
+  #     - SMTP_USER=${SMTP_USER}
+  #     - SMTP_PASSWORD=${SMTP_PASSWORD}
+  #     - SMTP_FROM=${SMTP_FROM}
+  #     - ADMIN_EMAILS=${ADMIN_EMAILS}
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     ollama:
+  #       condition: service_started
 
 volumes:
   postgres_data:
