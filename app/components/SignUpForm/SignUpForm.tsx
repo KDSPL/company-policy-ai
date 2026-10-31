@@ -82,7 +82,18 @@ const SignUpForm: React.FC = () => {
         >
           Confirm
         </button>
-         <GoogleSignInButton />
+
+        <p className={styles.text}>
+          Already have an account?{" "}
+          <a
+            href="/signin"
+            className={styles.boldText}
+          >
+            Sign in
+          </a>
+        </p>
+
+        <GoogleSignInButton />
       </form>
 
       <ThemeToggle />
