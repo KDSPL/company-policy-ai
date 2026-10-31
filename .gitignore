@@ -52,8 +52,11 @@ dev.db
 dev.db-journal
 /app/generated/prisma
 
-# IDE & Editor files
+# IDE, Local AI & Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
+.claude/
+.windsurf/
+.postman/
