@@ -6,6 +6,10 @@
     justify-content: center;
     flex-direction: column;
 
+    .logo {
+      object-fit: contain;
+    }
+
     .title {
       font-size: 16px;
       font-weight: 600;
@@ -68,6 +72,11 @@
     .text .boldText {
       color: var(--foreground);
       font-weight: 600;
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
     }
 
     .error {
