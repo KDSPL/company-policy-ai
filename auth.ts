@@ -1,9 +1,26 @@
-import NextAuth from "next-auth";
+import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 
 import { prisma } from "@/lib/prisma";
+
+// Module augmentation to inform TypeScript about custom fields on User, Session, and JWT
+declare module "next-auth" {
+  interface User {
+    role?: string;
+  }
+
+  interface Session {
+    user: {
+      role?: string;
+    } & DefaultSession["user"];
+  }
+
+  interface JWT {
+    role?: string;
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	providers: [
@@ -108,7 +125,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				token.id = user.id;
 				token.name = user.name;
 				token.email = user.email;
-				token.role = (user as { role?: string }).role;
+				token.role = user.role;
 			}
 
 			return token;
@@ -119,7 +136,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				session.user.id = token.id as string;
 				session.user.name = token.name as string;
 				session.user.email = token.email as string;
-				(session.user as { role?: string }).role = token.role as string;
+				session.user.role = token.role as string;
 			}
 
 			return session;

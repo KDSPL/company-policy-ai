@@ -24,7 +24,7 @@ Usually not needed - Prisma connects automatically on first query. Use for:
 async function main() {
   try {
     await prisma.$connect()
-    console.log('Database connected')
+    //console.log('Database connected')
   } catch (e) {
     console.error('Failed to connect:', e)
     process.exit(1)

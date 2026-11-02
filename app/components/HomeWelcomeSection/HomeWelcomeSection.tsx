@@ -14,7 +14,7 @@ const WelcomeSection: React.FC = () => {
           alt="logo"
         />
       </a>
-      <p className={styles.title}>Internal AI Bot</p>
+      <p className={styles.title}>Company Policy AI Bot</p>
       <h1 className={styles.chatTitle}>
         Hi! How can I help you?
       </h1>

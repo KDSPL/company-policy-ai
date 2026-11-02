@@ -21,6 +21,18 @@
   border-bottom: 1px solid var(--border);
   font-size: 18px;
   font-weight: 600;
+
+  @media (min-width: 769px) {
+    justify-content: left;
+    gap: 10px;
+  }
+
+  .kpLogoWrapper {
+    .logo {
+      object-fit: contain;
+      display: block;
+    }
+  }
 }
 
 .closeButton {
