@@ -163,7 +163,7 @@ const prisma = new PrismaClient({ adapter }).$extends({
 })
 
 const user = await prisma.user.findFirst()
-console.log(user.fullName) // Computed field
+//console.log(user.fullName) // Computed field
 ```
 
 ### Chain extensions
