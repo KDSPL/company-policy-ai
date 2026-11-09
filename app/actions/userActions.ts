@@ -25,6 +25,15 @@ export async function createUser(
         message: 'Email and password are required.',
       };
     }
+      
+    const ALLOWED_EMAIL_DOMAIN = '@kraftpixel.com';
+
+    if (!email.endsWith(ALLOWED_EMAIL_DOMAIN)) {
+    return {
+        success: false,
+        message: 'Only company email addresses (@kraftpixel.com) are allowed.',
+    };
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { email },

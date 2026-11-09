@@ -88,6 +88,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				return false;
 			}
 
+            // Allow only company email addresses.
+            const allowedDomain = "@kraftpixel.com";
+
+            if (!email.endsWith(allowedDomain)) {
+                return "/signin?error=CompanyEmailOnly";
+            }
+
 			const adminEmails =
 				process.env.ADMIN_EMAILS?.split(",")
 					.map((adminEmail) => adminEmail.trim().toLowerCase())
