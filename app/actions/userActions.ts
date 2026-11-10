@@ -1,6 +1,7 @@
 
 'use server';
 
+import { isAllowedEmail } from '@/lib/allowedEmail';
 import { prisma } from '@/lib/prisma';
 import * as bcrypt from 'bcrypt';
 
@@ -23,6 +24,13 @@ export async function createUser(
       return {
         success: false,
         message: 'Email and password are required.',
+      };
+    }
+
+    if (!isAllowedEmail(email)) {
+      return {
+        success: false,
+        message: 'Registration is not available for this email. Please contact your administrator for login details.',
       };
     }
 

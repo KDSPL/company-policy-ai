@@ -2,6 +2,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcrypt";
+import { isAllowedEmail } from '@/lib/allowedEmail';
 
 import { prisma } from "@/lib/prisma";
 
@@ -75,6 +76,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 	pages: {
 		signIn: "/signin",
+		error: "/signin",
 	},
 
 	callbacks: {
@@ -85,6 +87,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 			const email = user.email?.trim().toLowerCase();
 			if (!email) {
+				return false;
+			}
+
+			if (!isAllowedEmail(email)) {
 				return false;
 			}
 
