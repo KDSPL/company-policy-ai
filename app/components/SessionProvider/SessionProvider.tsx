@@ -1,18 +1,16 @@
-
-
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import LogoutSync from "@/app/components/Auth/LogoutSync";
 
 export default function AuthProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  console.log("AuthProvider RENDER");
-
   return (
-    <SessionProvider refetchOnWindowFocus={false}>
+    <SessionProvider>
+      <LogoutSync />
       {children}
     </SessionProvider>
   );

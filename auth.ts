@@ -1,4 +1,6 @@
+
 import NextAuth, { type DefaultSession } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcrypt";
@@ -6,36 +8,38 @@ import { isAllowedEmail } from '@/lib/allowedEmail';
 
 import { prisma } from "@/lib/prisma";
 
-// Module augmentation to inform TypeScript about custom fields on User, Session, and JWT
 declare module "next-auth" {
-  interface User {
-    role?: string;
-  }
+	interface User {
+		role?: string;
+		sessionVersion?: number;
+	}
 
-  interface Session {
-    user: {
-      role?: string;
-    } & DefaultSession["user"];
-  }
+	interface Session {
+		user: {
+			id: string;
+			role?: string;
+		} & DefaultSession["user"];
+		invalidated?: boolean;
+	}
+}
 
-  interface JWT {
-    role?: string;
-  }
+declare module "next-auth/jwt" {
+	interface JWT {
+		id?: string;
+		role?: string;
+		sessionVersion?: number;
+		invalidated?: boolean;
+	}
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	providers: [
 		Google,
+
 		Credentials({
 			credentials: {
-				email: {
-					label: "Email",
-					type: "email",
-				},
-				password: {
-					label: "Password",
-					type: "password",
-				},
+				email: { label: "Email", type: "email" },
+				password: { label: "Password", type: "password" },
 			},
 
 			async authorize(credentials) {
@@ -54,7 +58,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					return null;
 				}
 
-				const isPasswordValid = await bcrypt.compare(password, user.password);
+				const isPasswordValid = await bcrypt.compare(
+					password,
+					user.password
+				);
 
 				if (!isPasswordValid) {
 					return null;
@@ -65,6 +72,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					email: user.email,
 					name: user.name,
 					role: user.role,
+					sessionVersion: user.sessionVersion,
 				};
 			},
 		}),
@@ -86,6 +94,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			}
 
 			const email = user.email?.trim().toLowerCase();
+
 			if (!email) {
 				return false;
 			}
@@ -106,7 +115,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					email,
 					name: user.name?.trim() || email.split("@")[0],
 					password: null,
-					role: adminEmails.includes(email) ? "HR_ADMIN" : "EMPLOYEE",
+					role: adminEmails.includes(email)
+						? "HR_ADMIN"
+						: "EMPLOYEE",
 				},
 			});
 
@@ -114,9 +125,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 		},
 
 		async jwt({ token, user, account }) {
+			// --------------------------------
+			// 1. Initial Google login
+			// --------------------------------
+
 			if (user && account?.provider === "google" && user.email) {
 				const databaseUser = await prisma.user.findUnique({
-					where: { email: user.email.trim().toLowerCase() },
+					where: {
+						email: user.email.trim().toLowerCase(),
+					},
 				});
 
 				if (!databaseUser) {
@@ -127,23 +144,72 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				token.name = databaseUser.name;
 				token.email = databaseUser.email;
 				token.role = databaseUser.role;
-			} else if (user) {
+				token.sessionVersion = databaseUser.sessionVersion;
+				token.invalidated = false;
+			}
+
+			// --------------------------------
+			// 2. Initial Credentials login
+			// --------------------------------
+
+			else if (user) {
 				token.id = user.id;
 				token.name = user.name;
 				token.email = user.email;
 				token.role = user.role;
+				token.sessionVersion = user.sessionVersion;
+				token.invalidated = false;
+			}
+
+			// --------------------------------
+			// 3. Keep invalidated JWT invalid
+			// --------------------------------
+
+			if (token.invalidated === true) {
+				return token;
+			}
+
+			// --------------------------------
+			// 4. Validate JWT against database
+			// --------------------------------
+
+			if (!token.id || token.sessionVersion === undefined) {
+				token.invalidated = true;
+				return token;
+			}
+
+			const databaseUser = await prisma.user.findUnique({
+				where: {
+					id: token.id,
+				},
+				select: {
+					sessionVersion: true,
+				},
+			});
+
+			if (
+				!databaseUser ||
+				databaseUser.sessionVersion !== token.sessionVersion
+			) {
+				token.invalidated = true;
 			}
 
 			return token;
 		},
 
+		// --------------------------------
+		// 5. Expose session information
+		// --------------------------------
+
 		async session({ session, token }) {
 			if (session.user) {
-				session.user.id = token.id as string;
-				session.user.name = token.name as string;
-				session.user.email = token.email as string;
-				session.user.role = token.role as string;
+				session.user.id = token.id ?? "";
+				session.user.name = token.name ?? null;
+				session.user.email = token.email ?? "";
+				session.user.role = token.role;
 			}
+
+			session.invalidated = token.invalidated === true;
 
 			return session;
 		},

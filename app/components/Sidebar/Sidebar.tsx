@@ -19,6 +19,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const [isSettingOpen, setIsSettingOpen] =
     React.useState(false);
 
+  const [isSigningOut, setIsSigningOut] = React.useState(false);
+
   const { data: session, status } = useSession();
 
   const isLoggedIn = status === "authenticated";
@@ -34,11 +36,33 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   // Sign out
   // ==========================================
 
-  const handleSignOut = async () => {
-    await signOut({
-      callbackUrl: "/signin",
-    });
+  const handleLogout = async () => {
+    if (isSigningOut) return;
+
+    try {
+      setIsSigningOut(true);
+
+      // Step 1: Invalidate all sessions in the database
+      const response = await fetch("/api/logout-all", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to log out everywhere");
+      }
+
+      // Step 2: Sign out from the current browser
+      await signOut({
+        redirectTo: "/signin",
+      });
+
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert("Unable to log out. Please try again.");
+      setIsSigningOut(false);
+    }
   };
+
 
   // ==========================================
   // Profile popup
@@ -66,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
         </span>
 
         <p>AI Bot</p>
-        
+
         <button
           className={styles.closeButton}
           onClick={onClose}
@@ -162,7 +186,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
 
                 <button
                   className={styles.signout}
-                  onClick={handleSignOut}
+                  onClick={handleLogout}
                 >
                   <img
                     src={SignOutIcon.src}
@@ -171,7 +195,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
                     alt="log-out-icon"
                   />
 
-                  <span>Sign Out</span>
+                  <span>{isSigningOut ? "Signing out..." : "Sign Out"}</span>
                 </button>
               </div>
             </div>
